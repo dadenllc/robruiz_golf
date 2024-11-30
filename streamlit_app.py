@@ -57,6 +57,11 @@ if c.fetchone()[0] == 0:
 # Load scores into a DataFrame
 scores_df = pd.read_sql_query("SELECT * FROM scores", conn)
 
+# Convert score columns to integer type
+scores_df["round_1"] = scores_df["round_1"].astype(int)
+scores_df["round_2"] = scores_df["round_2"].astype(int)
+scores_df["round_3"] = scores_df["round_3"].astype(int)
+
 # Streamlit App
 st.title(tournament_name)
 
@@ -81,9 +86,9 @@ admin_password = st.text_input("Enter Admin Password", type="password")
 if admin_password == password:
     st.success("Access Granted. You can now enter the scores.")
     for i in range(len(scores_df)):
-        scores_df.at[i, "round_1"] = st.number_input(f"{scores_df.at[i, 'player']} - Round 1 Score", min_value=0, step=1, value=scores_df.at[i, "round_1"])
-        scores_df.at[i, "round_2"] = st.number_input(f"{scores_df.at[i, 'player']} - Round 2 Score", min_value=0, step=1, value=scores_df.at[i, "round_2"])
-        scores_df.at[i, "round_3"] = st.number_input(f"{scores_df.at[i, 'player']} - Round 3 Score", min_value=0, step=1, value=scores_df.at[i, "round_3"])
+        scores_df.at[i, "round_1"] = st.number_input(f"{scores_df.at[i, 'player']} - Round 1 Score", min_value=0, step=1, value=int(scores_df.at[i, "round_1"]))
+        scores_df.at[i, "round_2"] = st.number_input(f"{scores_df.at[i, 'player']} - Round 2 Score", min_value=0, step=1, value=int(scores_df.at[i, "round_2"]))
+        scores_df.at[i, "round_3"] = st.number_input(f"{scores_df.at[i, 'player']} - Round 3 Score", min_value=0, step=1, value=int(scores_df.at[i, "round_3"]))
 
     # Save scores to the database
     for i in range(len(scores_df)):
