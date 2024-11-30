@@ -39,9 +39,9 @@ c.execute('''
 CREATE TABLE IF NOT EXISTS scores (
     player TEXT,
     team TEXT,
-    round_1 INTEGER,
-    round_2 INTEGER,
-    round_3 INTEGER
+    round_1 INTEGER DEFAULT 0,
+    round_2 INTEGER DEFAULT 0,
+    round_3 INTEGER DEFAULT 0
 )
 ''')
 conn.commit()
@@ -57,10 +57,10 @@ if c.fetchone()[0] == 0:
 # Load scores into a DataFrame
 scores_df = pd.read_sql_query("SELECT * FROM scores", conn)
 
-# Convert score columns to integer type
-scores_df["round_1"] = scores_df["round_1"].astype(int)
-scores_df["round_2"] = scores_df["round_2"].astype(int)
-scores_df["round_3"] = scores_df["round_3"].astype(int)
+# Convert score columns to integer type, handling null values
+scores_df["round_1"] = pd.to_numeric(scores_df["round_1"], errors='coerce').fillna(0).astype(int)
+scores_df["round_2"] = pd.to_numeric(scores_df["round_2"], errors='coerce').fillna(0).astype(int)
+scores_df["round_3"] = pd.to_numeric(scores_df["round_3"], errors='coerce').fillna(0).astype(int)
 
 # Streamlit App
 st.title(tournament_name)
